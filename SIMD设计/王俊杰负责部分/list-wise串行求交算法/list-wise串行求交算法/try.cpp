@@ -5,6 +5,7 @@
 #include <iostream>
 #include <sstream>
 using namespace std;
+
 int main()
 {
     // 打开二进制文件 "ExpIndex"
@@ -77,15 +78,44 @@ int main()
     // 在这里可以进行后续的求交操作
     // ...
 
-    // 输出查询结果的前10项
-    int count = 0;
+    int bigconut = 0;
     for (const auto& result : queryData) {
         for (const auto& value : result) {
             cout << value[0] << " " << value[1] << " " << value[2] << " " << value[3] << " " << value[4] << " " << value[5] << "......" << endl;
         }
-        cout << "----------------------" << endl;
-        count++;
-        if (count == 10)
+        // 创建一个一维向量 intersection 来存储求交结果
+        vector<unsigned int> intersection = result[0];
+
+        // 对于每一个查询结果里面的每一个向量
+        for (const auto& value : result) {
+            // 创建一个一维向量 tempIntersection 来存储当前向量与 intersection 的交集
+            vector<unsigned int> tempIntersection;
+
+            // 对于当前向量中的每一个元素
+            for (const auto& element : value) {
+                // 如果当前元素也存在于 intersection 中，则将其添加到 tempIntersection
+                if (find(intersection.begin(), intersection.end(), element) != intersection.end()) {
+                    tempIntersection.push_back(element);
+                }
+            }
+
+            // 将 tempIntersection 更新为新的 intersection
+            intersection = tempIntersection;
+        }
+
+        // 输出求交结果的前5项
+        cout << "求交结果的前5项为：";
+        int count = 0;
+        for (const auto& value : intersection) {
+            cout << value << " ";
+            count++;
+            if (count == 5) {
+                break;
+            }
+        }
+        cout <<endl<< "----------------------" << endl;
+        bigconut++;
+        if (bigconut == 10)
             break;
     }
 
