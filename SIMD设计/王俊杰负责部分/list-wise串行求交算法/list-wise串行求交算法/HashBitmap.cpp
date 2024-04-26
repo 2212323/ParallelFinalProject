@@ -6,7 +6,7 @@
 #include <fstream>
 #include <fstream>
 using namespace std;
-const unsigned int MAX_SIZE = 30000000;  // 位图的最大大小
+const unsigned int MAX_SIZE = 40000000;  // 位图的最大大小
 const unsigned int BLOCK_SIZE = 64;  // 位图块的大小
 
 // void saveToDisk(vector<bitset<MAX_SIZE>>* indexData, vector<vector<bitset<MAX_SIZE>>>* queryData) {
@@ -80,72 +80,53 @@ const unsigned int BLOCK_SIZE = 64;  // 位图块的大小
 //     inFile.close();
 // }
 int main() {
-    cout << MAX_SIZE / BLOCK_SIZE;
+    cout<<MAX_SIZE / BLOCK_SIZE;
 
     // 打开二进制文件 "ExpIndex"
     ifstream indexFile("ExpIndex", ios::binary);
     // 在堆上创建一个二维位图 indexData 来存储数据
     vector<bitset<MAX_SIZE>>* indexData = new vector<bitset<MAX_SIZE>>();
+    // 创建一个二级索引
+    vector<bitset<MAX_SIZE / BLOCK_SIZE>>* secondaryIndexData = new vector<bitset<MAX_SIZE / BLOCK_SIZE>>();
 
     // 如果文件成功打开
     if (indexFile.is_open()) {
         cout << "indexFile opened" << endl;
         // 循环读取文件直到文件末尾
         int www = 0;
-        while (++www < 5 && !indexFile.eof()) {
+        while (!indexFile.eof()) {
             // 读取数组的长度
             unsigned int arrayLength;
             indexFile.read(reinterpret_cast<char*>(&arrayLength), sizeof(arrayLength));
             // 在堆上创建一个长度为 MAX_SIZE 的位图 arrayData
             bitset<MAX_SIZE>* arrayData = new bitset<MAX_SIZE>();
+            // 在堆上创建一个长度为 MAX_SIZE / BLOCK_SIZE 的位图 secondaryIndex
+            bitset<MAX_SIZE / BLOCK_SIZE>* secondaryIndex = new bitset<MAX_SIZE / BLOCK_SIZE>();
             // 循环读取数组的每个元素
             for (unsigned int i = 0; i < arrayLength; ++i) {
                 // 读取元素的值
                 unsigned int value;
                 indexFile.read(reinterpret_cast<char*>(&value), sizeof(value));
+
                 // 将元素的值对应的位设置为1
                 arrayData->set(value);
+                secondaryIndex->set(value / BLOCK_SIZE);
             }
             // 将位图 arrayData 存入二维位图 indexData
             indexData->push_back(*arrayData);
+            secondaryIndexData->push_back(*secondaryIndex);
             // 释放动态分配的内存
             delete arrayData;
         }
         // 关闭文件
         indexFile.close();
     }
+  
 
-    // 创建二级索引
-   // 创建一个二级索引
-    vector<bitset<MAX_SIZE / BLOCK_SIZE>>* secondaryIndexData = new vector<bitset<MAX_SIZE / BLOCK_SIZE>>();
-    cout << "secondaryIndexData" << endl;
-    for (const auto& Onebitset : *indexData) {
-        // 在堆上创建一个长度为 MAX_SIZE / BLOCK_SIZE 的位图 secondaryIndex
-        bitset<MAX_SIZE / BLOCK_SIZE>* secondaryIndex = new bitset<MAX_SIZE / BLOCK_SIZE>();
-        // 循环遍历 Onebitset 的每个块
-        for (int i = 0; i < MAX_SIZE; i += BLOCK_SIZE) {
-            // 遍历当前块的每个位
-            for (int j = 0; j < BLOCK_SIZE; ++j) {
-                // 如果当前位为1，则将对应的 secondaryIndex 位设置为1，并跳出内层循环
-                if (Onebitset[i + j]) {
-                    cout << "i=" << i << "j=" << j << endl;
-
-                    secondaryIndex->set(i / BLOCK_SIZE);
-                    break;
-                }
-            }
-            // 将 secondaryIndex 存入二级索引 secondaryIndexData
-            secondaryIndexData->push_back(*secondaryIndex);
-        }
-        // 释放动态分配的内存
-        cout << "over Onebitset" << endl;
-        delete secondaryIndex;
-    }
-
-    // 打开查询文件 "ExpQuery"
-    ifstream queryFile("ExpQuery");
-    // 创建一个三维位图 queryData 来存储查询结果
-    vector<vector<bitset<MAX_SIZE / BLOCK_SIZE>>>* queryData = new vector<vector<bitset<MAX_SIZE / BLOCK_SIZE>>>();
+// 打开查询文件 "ExpQuery"
+ifstream queryFile("ExpQuery");
+// 创建一个三维位图 queryData 来存储查询结果
+vector<vector<bitset<MAX_SIZE/ BLOCK_SIZE>>>* queryData = new vector<vector<bitset<MAX_SIZE/ BLOCK_SIZE>>>();
 
     // 如果文件成功打开
     if (queryFile.is_open()) {
@@ -154,7 +135,7 @@ int main() {
         string line;
         while (getline(queryFile, line)) {
             // 创建一个二维位图 queryResult 来存储查询结果
-            vector<bitset<MAX_SIZE / BLOCK_SIZE>> queryResult;
+            vector<bitset<MAX_SIZE/ BLOCK_SIZE>> queryResult;
             // 将行中的每个数字转换为索引文件的数组下标，并查询对应的位图
             stringstream ss(line);
             unsigned int index;
@@ -174,7 +155,7 @@ int main() {
         for (int j = 0; j < 5 && j < (*queryData)[i].size(); ++j) {
             cout << (*queryData)[i][j] << " ";
         }
-        cout << endl;
+        cout <<endl<<"------------------------------------------------------------------"<<endl;
     }
     //saveToDisk(indexData, queryData);
 
