@@ -7,6 +7,8 @@
 #include <fstream>
 #include <emmintrin.h> // Include SSE header
 #include <smmintrin.h>
+#include<windows.h>
+
 using namespace std;
 
 const unsigned int MAX_SIZE = 40000000; // 位图的最大大小
@@ -122,23 +124,33 @@ int main()
     // 在这里可以进行后续的求交操作
     // 创建一个二维向量 intersectionData 来存储求交结果
     cout << "intersectionData created" << endl;
-    int DoNum = 100;
+    int DoNum = 1000;
     vector<vector<unsigned int>> intersectionData(DoNum);
     //// 遍历每个查询结果
+    size_t times=0;
+    size_t index=0;
+    size_t step=100;//每多少组数据测试一次时间
+    LARGE_INTEGER frequency;        // ticks per second
+    LARGE_INTEGER t1, t2;           // ticks
+    vector<double> elapsedTime(DoNum/step);
+     // get ticks per second
+    QueryPerformanceFrequency(&frequency);
+
+    QueryPerformanceCounter(&t1); // start timer at the beginning of the loop
+
+
     for (int i = 0; i < DoNum; i++)
     {
-        cout << "DoNum:" << i << endl;
+        //cout << "DoNum:" << i << endl;
         // 获取当前查询结果的第一个位图
         bitset<MAX_SIZE> *intersection = new bitset<MAX_SIZE>((*BasequeryData)[i][0]);
         bitset<MAX_SIZE / BLOCK_SIZE> *secondaryintersection = new bitset<MAX_SIZE / BLOCK_SIZE>((*secondaryqueryData)[i][0]); // 对于每一个查询结果里面的每一个位图
         bitset<MAX_SIZE> *tempintersection;
         bitset<MAX_SIZE / BLOCK_SIZE> *tempsecondaryintersection;
-        bitset<128> *smallintersection;// 创建一个新的bitset
-        bitset<128> *smallquery;// 创建一个新的bitset
 
         for (int j = 0; j < (*BasequeryData)[i].size(); ++j)
         {
-            cout << " j:" << j << endl;
+            //cout << " j:" << j << endl;
             // 创建一个一维位图 tempIntersection 来存储当前位图与 intersection 的交集
             tempintersection = new bitset<MAX_SIZE>();
             tempsecondaryintersection = new bitset<MAX_SIZE / BLOCK_SIZE>();
@@ -150,31 +162,22 @@ int main()
                 if ((*secondaryintersection)[k] & (*secondaryqueryData)[i][j][k])
                 {
                     //cout << " k:" << k << endl;
-                    smallintersection=new bitset<128>() ;// 创建一个新的bitset
-                    smallquery=new bitset<128>() ;// 创建一个新的bitset
+                    bitset<128> *smallintersection=new bitset<128>() ;// 创建一个新的bitset
+                    bitset<128> *smallquery=new bitset<128>() ;// 创建一个新的bitset
 
                     // 将大bitset中的特定范围的位复制到小bitset中
                     for (int l = 0; l < BLOCK_SIZE; l++) {
                         (*smallintersection)[l] = (*intersection)[k*BLOCK_SIZE + l];
                         (*smallquery)[l] = (*BasequeryData)[i][j][k*BLOCK_SIZE + l];
                     }
-                    // 从bitset中读取64位，并转换为unsigned long long
-                    // unsigned long long lower1 = smallintersection->to_ullong();
-                    // unsigned long long upper1 = (*smallintersection >> 64).to_ullong();
-                    // unsigned long long lower2 = smallquery->to_ullong();
-                    // unsigned long long upper2 = (*smallquery >> 64).to_ullong();
 
-                    // smallintersection=nullptr;
-                    // smallquery=nullptr;
-                    // // 使用_mm_set_epi64x函数将两个unsigned long long值读取到__m128i中
-                    // __m128i vec1 = _mm_set_epi64x(upper1, lower1);
-                    // __m128i vec2 = _mm_set_epi64x(upper2, lower2);
-                    
-                    
+
                     __m128i vec1 = bitset_to_m128i(*smallintersection);
                     __m128i vec2 = bitset_to_m128i(*smallquery);
-                    smallintersection=nullptr;
-                    smallquery=nullptr;
+                    delete smallintersection;
+                    delete smallquery;
+                    // smallintersection=nullptr;
+                    // smallquery=nullptr;
 
                     // 使用_mm_and_si128函数执行按位与操作
                     __m128i andResult = _mm_and_si128(vec1, vec2);
@@ -206,6 +209,8 @@ int main()
             // 将 tempIntersection 更新为新的 intersection
             intersection = tempintersection;
             secondaryintersection = tempsecondaryintersection;
+            // delete tempintersection;
+            // delete tempsecondaryintersection;
             tempintersection = nullptr;
             tempsecondaryintersection = nullptr;
 
@@ -217,10 +222,28 @@ delete intersection;
 delete secondaryintersection;
 //delete tempintersection;
 //delete tempsecondaryintersection;
+
+    times++;
+ if(times%step==0)
+        {
+            // stop timer
+        QueryPerformanceCounter(&t2);
+
+        // compute and print the elapsed time in millisec
+        elapsedTime[index] = (t2.QuadPart - t1.QuadPart) * 1000.0 / frequency.QuadPart;
+        std::cout << "Elapsed time for 100 iterations: " << elapsedTime[index] << " ms.\n";
+        index++;
+        QueryPerformanceCounter(&t1); // reset the start timer for the next 100 iterations
+        }
+
 }
-    
+     for(size_t i=0;i<DoNum/step;i++)
+    {
+        cout<<"Elapsed time for 100 iterations: "<<i<<":"<<elapsedTime[i]<<" ms.\n";
+    }
+
 // 循环输出求交结果的前5项
-for (int i = 0; i < DoNum; ++i)
+for (int i = 0; i <0; ++i)
 {
     cout << "求交结果的前5项为：";
     int count = 0;
