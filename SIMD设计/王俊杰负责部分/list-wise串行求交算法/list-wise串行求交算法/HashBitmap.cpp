@@ -101,7 +101,7 @@ vector<vector<bitset<MAX_SIZE/ BLOCK_SIZE>>>* secondaryqueryData = new vector<ve
     // 在这里可以进行后续的求交操作
     // 创建一个二维向量 intersectionData 来存储求交结果
     cout<<"intersectionData created"<<endl;
-    int DoNum = 100;
+    int DoNum = 1000;
     vector<vector<unsigned int>> intersectionData(DoNum);
     //// 遍历每个查询结果
     for(int i=0;i<DoNum;i++){
@@ -109,11 +109,15 @@ vector<vector<bitset<MAX_SIZE/ BLOCK_SIZE>>>* secondaryqueryData = new vector<ve
         // 获取当前查询结果的第一个位图
         bitset<MAX_SIZE>* intersection = new bitset<MAX_SIZE>((*BasequeryData)[i][0]);
         bitset<MAX_SIZE/BLOCK_SIZE>* secondaryintersection = new bitset<MAX_SIZE/BLOCK_SIZE>((*secondaryqueryData)[i][0]);        // 对于每一个查询结果里面的每一个位图
+        bitset<MAX_SIZE>* tempintersection;
+        bitset<MAX_SIZE/BLOCK_SIZE>* tempsecondaryintersection;
+
+        
         for (int j = 0; j < (*BasequeryData)[i].size(); ++j) {
             cout<<" j:"<<j<<endl;
            // 创建一个一维位图 tempIntersection 来存储当前位图与 intersection 的交集
-            bitset<MAX_SIZE>* tempintersection = new bitset<MAX_SIZE>();
-            bitset<MAX_SIZE/BLOCK_SIZE>* tempsecondaryintersection = new bitset<MAX_SIZE/BLOCK_SIZE>();
+            tempintersection = new bitset<MAX_SIZE>();
+            tempsecondaryintersection = new bitset<MAX_SIZE/BLOCK_SIZE>();
            // 遍历当前位图的每个块
            for(int k=0;k<MAX_SIZE/ BLOCK_SIZE;k++){
                // 如果当前位图的二级索引与 intersection 的二级索引有交集
@@ -137,6 +141,8 @@ vector<vector<bitset<MAX_SIZE/ BLOCK_SIZE>>>* secondaryqueryData = new vector<ve
             // 将 tempIntersection 更新为新的 intersection
         intersection = tempintersection;
         secondaryintersection = tempsecondaryintersection;
+        tempintersection=nullptr;
+        tempsecondaryintersection=nullptr;
 
         
         }
@@ -145,6 +151,9 @@ vector<vector<bitset<MAX_SIZE/ BLOCK_SIZE>>>* secondaryqueryData = new vector<ve
         // 释放动态分配的内存
         delete intersection;
         delete secondaryintersection;
+        delete tempintersection;
+        delete tempsecondaryintersection;
+        
 
 
    
