@@ -6,8 +6,7 @@
 #include <iostream>
 #include <algorithm>
 #include <sstream>
-//#include <wincrypt.h>
-#include<windows.h>
+#include <sys/time.h> //gettimeofday()
 using namespace std;
 int main()
 {
@@ -81,14 +80,13 @@ if (indexFile.is_open())
     size_t times=0;
     size_t index=0;
     size_t step=100;//每多少组数据测试一次时间
-    LARGE_INTEGER frequency;        // ticks per second
-    LARGE_INTEGER t1, t2;           // ticks
+    struct timeval t1, t2; // Use struct timeval to record time
     vector<double> elapsedTime(queryDataSize/step);
 
     // get ticks per second
-    QueryPerformanceFrequency(&frequency);
+    //QueryPerformanceFrequency(&frequency);
 
-    QueryPerformanceCounter(&t1); // start timer at the beginning of the loop
+   gettimeofday(&t1, NULL); // Start timer
 
     for(size_t i=0;i<queryDataSize;i++)
     {
@@ -124,14 +122,13 @@ if (indexFile.is_open())
         times++;
         if(times%step==0)
         {
-            // stop timer
-        QueryPerformanceCounter(&t2);
+            gettimeofday(&t2, NULL); // Stop timer
 
         // compute and print the elapsed time in millisec
-        elapsedTime[index] = (t2.QuadPart - t1.QuadPart) * 1000.0 / frequency.QuadPart;
+        elapsedTime[index] = (t2.tv_sec - t1.tv_sec) * 1000.0;// sec to ms
         std::cout << "Elapsed time for 100 iterations: " << elapsedTime[index] << " ms.\n";
         index++;
-        QueryPerformanceCounter(&t1); // reset the start timer for the next 100 iterations
+        gettimeofday(&t1, NULL); // Reset the start timer for the next 100 iterations
         }
     }
 
