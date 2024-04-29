@@ -4,6 +4,8 @@
 #include <string>
 #include <iostream>
 #include <sstream>
+#include <algorithm>
+#include <windows.h>
 using namespace std;
 
 int main()
@@ -78,11 +80,21 @@ int main()
     // 在这里可以进行后续的求交操作
     // ...
 
-    int bigconut = 0;
+    int queryDataSize = 1000;
+    size_t times=0;
+    size_t index=0;
+    size_t step=100;//每多少组数据测试一次时间
+    LARGE_INTEGER frequency;        // ticks per second
+    LARGE_INTEGER t1, t2;           // ticks
+    vector<double> elapsedTime(queryDataSize/step);
+
+    // get ticks per second
+    QueryPerformanceFrequency(&frequency);
+
+    QueryPerformanceCounter(&t1); // start timer at the beginning of the loop
+
     for (const auto& result : queryData) {
-        for (const auto& value : result) {
-            cout << value[0] << " " << value[1] << " " << value[2] << " " << value[3] << " " << value[4] << " " << value[5] << "......" << endl;
-        }
+
         // 创建一个一维向量 intersection 来存储求交结果
         vector<unsigned int> intersection = result[0];
 
@@ -104,19 +116,27 @@ int main()
         }
 
         // 输出求交结果的前5项
-        cout << "求交结果的前5项为：";
-        int count = 0;
-        for (const auto& value : intersection) {
-            cout << value << " ";
-            count++;
-            if (count == 5) {
-                break;
-            }
+
+         times++;
+        if(times%step==0)
+        {
+            // stop timer
+        QueryPerformanceCounter(&t2);
+
+        // compute and print the elapsed time in millisec
+        elapsedTime[index] = (t2.QuadPart - t1.QuadPart) * 1000.0 / frequency.QuadPart;
+        std::cout << "Elapsed time for 100 iterations: " << elapsedTime[index] << " ms.\n";
+        index++;
+        QueryPerformanceCounter(&t1); // reset the start timer for the next 100 iterations
         }
-        cout <<endl<< "----------------------" << endl;
-        bigconut++;
-        if (bigconut == 10)
-            break;
+
     }
+
+
+    for(int i=0;i<queryDataSize/step;i++)
+    {
+        cout<<"Elapsed time for 100 iterations: "<<i<<":"<<elapsedTime[i]<<" ms.\n";
+    }
+
 
 }
