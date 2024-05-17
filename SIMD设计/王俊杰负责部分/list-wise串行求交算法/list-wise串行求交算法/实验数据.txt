@@ -1,0 +1,33 @@
+平凡算法
+Elapsed time for 100 iterations: 0:16209.5 ms.
+Elapsed time for 100 iterations: 1:13518.2 ms.
+Elapsed time for 100 iterations: 2:13635.3 ms.
+Elapsed time for 100 iterations: 3:15290.8 ms.
+Elapsed time for 100 iterations: 4:13940.2 ms.
+Elapsed time for 100 iterations: 5:14312.9 ms.
+Elapsed time for 100 iterations: 6:14652.7 ms.
+Elapsed time for 100 iterations: 7:14586.6 ms.
+Elapsed time for 100 iterations: 8:15076.2 ms.
+Elapsed time for 100 iterations: 9:15134.5 ms.
+二级索引位图串行算法
+Elapsed time for 100 iterations: 0:2717.35 ms.
+Elapsed time for 100 iterations: 1:1622.96 ms.
+Elapsed time for 100 iterations: 2:1542.06 ms.
+Elapsed time for 100 iterations: 3:1455.23 ms.
+Elapsed time for 100 iterations: 4:1714.09 ms.
+Elapsed time for 100 iterations: 5:1652.66 ms.
+Elapsed time for 100 iterations: 6:2281.62 ms.
+Elapsed time for 100 iterations: 7:1794.87 ms.
+Elapsed time for 100 iterations: 8:1444.54 ms.
+Elapsed time for 100 iterations: 9:1461.34 ms.
+SIMD并行算法
+Elapsed time for 100 iterations: 0:1606.99 ms.
+Elapsed time for 100 iterations: 1:2279.28 ms.
+Elapsed time for 100 iterations: 2:1560.9 ms.
+Elapsed time for 100 iterations: 3:1754.48 ms.
+Elapsed time for 100 iterations: 4:2067.27 ms.
+Elapsed time for 100 iterations: 5:1601.21 ms.
+Elapsed time for 100 iterations: 6:2120.46 ms.
+Elapsed time for 100 iterations: 7:2936.28 ms.
+Elapsed time for 100 iterations: 8:1949.74 ms.
+Elapsed time for 100 iterations: 9:1504.01 ms.
