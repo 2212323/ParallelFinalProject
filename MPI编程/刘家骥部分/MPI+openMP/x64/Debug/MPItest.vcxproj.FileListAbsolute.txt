@@ -1,0 +1,1 @@
+D:\C++程序\MPItest\x64\Debug\MPItest.exe
