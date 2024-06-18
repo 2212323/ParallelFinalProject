@@ -1,0 +1,7 @@
+﻿  源.cpp
+D:\C++程序\倒排索引求交MPI化\源.cpp(49,41): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
+D:\C++程序\倒排索引求交MPI化\源.cpp(57,52): warning C4267: “初始化”: 从“size_t”转换到“unsigned int”，可能丢失数据
+D:\C++程序\倒排索引求交MPI化\源.cpp(96,41): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
+D:\C++程序\倒排索引求交MPI化\源.cpp(102,49): warning C4267: “初始化”: 从“size_t”转换到“int”，可能丢失数据
+D:\C++程序\倒排索引求交MPI化\源.cpp(108,60): warning C4267: “初始化”: 从“size_t”转换到“unsigned int”，可能丢失数据
+  倒排索引求交MPI化.vcxproj -> D:\C++程序\倒排索引求交MPI化\x64\Debug\倒排索引求交MPI化.exe
